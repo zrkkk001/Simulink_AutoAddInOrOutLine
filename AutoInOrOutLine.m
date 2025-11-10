@@ -1,12 +1,20 @@
-% V1.0
-% 2023-1-4
+% V1.2
+% 2025-11-10
 % zrkkk
-% MATLAB 2015b
-model_set=[30,14 ];%²ÎÊý·Ö±ð´ú±íÄ£ÐÍ³¤ºÍ¸ß£¬¿É×ÔÐÐÐÞ¸Ä
-int_distance=100;%ÊäÈëÄ£¿éºÍÄ£ÐÍµÄ¼ä¾à£¬¿É×ÔÐÐÐÞ¸Ä
-out_distance=100;%Êä³öÄ£¿éºÍÄ£ÐÍµÄ¼ä¾à£¬¿É×ÔÐÐÐÞ¸Ä
+% MATLAB 2021b
+%% è°ƒèŠ‚åç§°å‰åŽç¼€
+a1='';
+b1='';
 
-%% µ÷½ÚÄ£¿é´óÐ¡
+a2='';
+b2='_FL'; 
+b2=b1;
+%% 
+model_set=[30,14 ];%å‚æ•°åˆ†åˆ«ä»£è¡¨æ¨¡åž‹é•¿å’Œé«˜ï¼Œå¯è‡ªè¡Œä¿®æ”¹
+int_distance=200;%è¾“å…¥æ¨¡å—å’Œæ¨¡åž‹çš„é—´è·ï¼Œå¯è‡ªè¡Œä¿®æ”¹
+out_distance=200;%è¾“å‡ºæ¨¡å—å’Œæ¨¡åž‹çš„é—´è·ï¼Œå¯è‡ªè¡Œä¿®æ”¹
+
+%% è°ƒèŠ‚æ¨¡å—å¤§å°
 a=get(gcbh);
 amxl=max(a.Ports)/2*35;
 
@@ -17,35 +25,23 @@ a.Position(3)=max(px+amxl*0.618/2,a.Position(3));
 
 a.Position(2)=py-amxl;
 a.Position(4)=py+amxl;
-set_param(gcb,'Position',a.Position,'Description',[get_param(gcb,'Description') datestr(now,31) ,newline...
-    getenv('USERNAME')  newline  newline ]);
+set_param(gcb,'Position',a.Position,'Description',[datestr(now,31) ,newline ...
+    getenv('USERNAME')   ...
+    ]);
+%% æœç´¢æœ¬å±‚è¾“å…¥è¾“å‡ºä¿¡å·
+all=get(gcbh);%èŽ·å–ç›®æ ‡
 
-%% ËÑË÷±¾²ãÊäÈëÊä³öÐÅºÅ
-all=get(gcbh);%»ñÈ¡Ä¿±ê
-
-Path=all.Path;%Ä¿±êÄ£¿éÂ·¾¶
-Blocks =all.Blocks;%ÊäÈëÊä³öÄ£¿éÃû³Æ
-PortConnectivity=all.PortConnectivity;%ÊäÈëÊä³öÄ£¿éÊýÁ¿¼°µãÎ»ÐÅÏ¢
+Path=all.Path;%ç›®æ ‡æ¨¡å—è·¯å¾„
+Blocks =all.Blocks;%è¾“å…¥è¾“å‡ºæ¨¡å—åç§°
+PortConnectivity=all.PortConnectivity;%è¾“å…¥è¾“å‡ºæ¨¡å—æ•°é‡åŠç‚¹ä½ä¿¡æ¯
 InportCell = find_system(Path,'SearchDepth','1','BlockType','Inport'); 
-OurportCell = find_system(Path,'SearchDepth','1','BlockType','Outport');  %»ñÈ¡±¾²ãOutportÄ£¿éÂ·¾¶
+OurportCell = find_system(Path,'SearchDepth','1','BlockType','Outport');  %èŽ·å–æœ¬å±‚Outportæ¨¡å—è·¯å¾„
 
-%% Ìí¼ÓÊäÈëÊä³ö¶Ë
+%% æ·»åŠ è¾“å…¥è¾“å‡ºç«¯
 
 
-a='';
-%Ãû³ÆÖØÃüÃû
-% for i =1:numel(Blocks)  
-% %             Blocks{i,1}= regexprep(Blocks{i,1},'B_','');
-%          if regexpi(Blocks{i,1},'T_.*')%·§²ßÂÔÐÅºÅ¡¢Ñ¹Á¦Ä¿±êÐÅºÅÃû³ÆÍ³Ò»
-%                  Blocks{i,1}= regexprep( Blocks{i,1},'T_','');
-%                
-%                   Blocks{i,1}=[Blocks{i,1},'_Duration']
-%          end 
-%               if regexpi(Blocks{i,1},'.*(Duration).*')%·§²ßÂÔÐÅºÅ¡¢Ñ¹Á¦Ä¿±êÐÅºÅÃû³ÆÍ³Ò»
-%                  Blocks{i,1}= regexprep( Blocks{i,1},'_Duration_','_Duration');
-%                  Blocks{i,1}=[Blocks{i,1}(1:2),Blocks{i,1}(end-1:end),Blocks{i,1}(3:end-2)]
-%               end 
-% end
+
+
 for i =1:numel(PortConnectivity)  
 if PortConnectivity(i).Position(1)==PortConnectivity(1).Position(1)
 %  continue
@@ -53,25 +49,25 @@ if PortConnectivity(i).Position(1)==PortConnectivity(1).Position(1)
      
       elseif  ismember([Path,'/' ,Blocks{i,1}],InportCell)
           [intnum,intwhee]= ismember([Path,'/' ,Blocks{i,1}],InportCell);
-         add_line(Path,[Blocks{i,1},'/1'],[all.Name,'/',PortConnectivity(i).Type],'autorouting','smart');
+         add_line(Path,[Blocks{i,1},'/1'],[all.Name,'/',PortConnectivity(i).Type]);
      elseif  ismember([Path,'/' ,Blocks{i,1}],OurportCell);
         
  else
-Blocks{i,1}=[a,Blocks{i,1}];
+Blocks{i,1}=[a1,Blocks{i,1},b1];
 Inport_handle=add_block('simulink/Ports & Subsystems/In1',[Path,'/' ,Blocks{i,1}]);
    
    
  positiontaype=[-model_set(1)-int_distance -model_set(2)/2 -int_distance model_set(2)/2] ; 
  Inport_position = positiontaype+[PortConnectivity(i).Position, PortConnectivity(i).Position];
    set_param(Inport_handle,'position',Inport_position);
-    %Á¬Ïß   
-add_line(Path,[Blocks{i,1},'/1'],[all.Name,'/',PortConnectivity(i).Type],'autorouting','smart');
+    %è¿žçº¿   
+add_line(Path,[Blocks{i,1},'/1'],[all.Name,'/',PortConnectivity(i).Type]);
     end
 else
    
 %      continue
     k=numel(PortConnectivity)-i;
-       Blocks{end-k,1}=[a,Blocks{end-k,1}];
+       Blocks{end-k,1}=[a2,Blocks{end-k,1},b2];
      if PortConnectivity(end-k).DstBlock >0
      elseif  ismember([Path,'/' ,Blocks{end-k,1}],OurportCell)
            
@@ -88,7 +84,7 @@ else
  positiontaype=[out_distance -model_set(2)/2 model_set(1)+out_distance model_set(2)/2] ; 
  Outport_position = positiontaype+[PortConnectivity(i).Position, PortConnectivity(i).Position];
    set_param(Outport_handle,'position',Outport_position);
-    %Á¬Ïß
+    %è¿žçº¿
  add_line(Path,[all.Name,'/',PortConnectivity(i).Type],[Blocks{end-k,1},'/1']);
     end
     
